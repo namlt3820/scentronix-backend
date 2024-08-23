@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/scentronix-backend/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/scentronix-backend/tsconfig.app.json"
+  },
+  "defaultLibraryPrefix": "@lib",
+  "monorepo": true,
+  "root": "apps/scentronix-backend",
+  "projects": {
+    "scentronix-backend": {
+      "type": "application",
+      "root": "apps/scentronix-backend",
+      "entryFile": "main",
+      "sourceRoot": "apps/scentronix-backend/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/scentronix-backend/tsconfig.app.json"
+      }
+    },
+    "config": {
+      "type": "library",
+      "root": "libs/config",
+      "entryFile": "index",
+      "sourceRoot": "libs/config/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/config/tsconfig.lib.json"
+      }
+    },
+    "use-case": {
+      "type": "library",
+      "root": "libs/use-case",
+      "entryFile": "index",
+      "sourceRoot": "libs/use-case/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/use-case/tsconfig.lib.json"
+      }
+    },
+    "microservice": {
+      "type": "application",
+      "root": "apps/microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/microservice/tsconfig.app.json"
+      }
+    }
+  }
+}
