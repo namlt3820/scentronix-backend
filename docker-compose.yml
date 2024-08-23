@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  redis:
+    container_name: scentronex_redis
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass redis_123
+    volumes:
+      - 'redis_data:/data'
+    networks:
+      - app-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

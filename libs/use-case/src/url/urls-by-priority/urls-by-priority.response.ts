@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 import { UrlDto } from '@lib/config';
 
 export class UrlsByPriorityResponse {
-  @ApiProperty()
+  @ApiProperty({ type: [UrlDto] })
   @Type(() => UrlDto)
   data: UrlDto[];
 }

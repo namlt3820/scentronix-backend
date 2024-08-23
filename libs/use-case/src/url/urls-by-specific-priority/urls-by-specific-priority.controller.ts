@@ -14,8 +14,8 @@ export class UrlsBySpecificPriorityController {
 
   @Get(':priority')
   @ApiResponse({
-    status: 201,
-    type: UrlsBySpecificPriorityService,
+    status: 200,
+    type: UrlsBySpecificPriorityResponse,
   })
   async run(
     @Param('priority', ParseIntPipe) priority: number,

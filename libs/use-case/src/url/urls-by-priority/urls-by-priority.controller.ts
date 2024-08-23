@@ -12,7 +12,7 @@ export class UrlsByPriorityController {
 
   @Get()
   @ApiResponse({
-    status: 201,
+    status: 200,
     type: UrlsByPriorityResponse,
   })
   async run(): Promise<UrlsByPriorityResponse> {
