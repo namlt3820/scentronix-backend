@@ -1,73 +1,48 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is the assignment for the [Scentronix backend test](https://gitlab.com/scentronix/assessments/web-interviews/-/tree/master/backend?ref_type=heads), which involves implementing a backend service using TypeScript to return reachable URLs, either ordered by priority or by querying a specific priority number. This setup uses a NestJS monorepo.
 
-## Installation
+- **project-root/**
+  - **apps/**: Store different applications, such as microservices or workers, which can reuse functionalities from the libraries defined in the libs/ directory.
+    - **scentronix-backend/**: The main app.
+  - **libs/**: Define functionalities that can be shared between applications.
+    - **config/**: Store all app configurations that are not related to business rules.
+      - **app-cache/**: Set up the cache layer using Redis.
+      - **app-config/**: Configure all application values from environment variables using the NestJS Config Module.
+      - **mock-data/**: Set up a mock data service that returns URLs and their priorities.
+    - **use-case/**: Store all business-related modules.
+      - **url-status/**: Check URL availability status: first query the cache, and if values are not found, call the API directly.
+      - **urls-by-priority/**: Return reachable URLs ordered by priority, with 1 being the highest.
+      - **urls-by-specific-priority/**: Return reachable URLs by querying a specific priority number.
 
-```bash
-$ yarn install
-```
-
-## Running the app
-
-```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
-```
-
-## Test
+## Setup
 
 ```bash
-# unit tests
-$ yarn run test
+# install
+$ yarn install --frozen-lockfile
 
-# e2e tests
-$ yarn run test:e2e
+# setup external services with docker compose
+$ docker compose up --build -d
 
-# test coverage
-$ yarn run test:cov
+# setup external services with docker (if not use docker compose)
+$ docker run --name redis -p 6379:6379 -e REDIS_PASSWORD=redis_123 -d redis redis-server --requirepass redis_123
+
+# start server
+$ yarn start:dev
+
+# unit test
+$ yarn test
+
+# unit test coverage
+$ yarn test:cov
+
+# e2e test
+$ yarn test:e2e
 ```
 
-## Support
+## Usage
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- Postman: Visit http://localhost:3000 and use the endpoints /urls or /urls/{priority}.
+- Swagger: Visit http://localhost:3000/api. You can test the APIs directly from Swagger by clicking the Try it out button.
+- The initial query may be slow because the request checks the server's availability and times out after 5 seconds. Subsequent queries will be faster as the server status is cached in Redis.
+- After 5 minutes, the server status will be removed from Redis, and a new request will be made to check the server's availability again.
