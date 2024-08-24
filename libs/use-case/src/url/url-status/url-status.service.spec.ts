@@ -58,7 +58,7 @@ describe('UrlStatusService', () => {
       .timeout();
   };
 
-  describe('method checkUrlDirectly', () => {
+  describe('checkUrlDirectly', () => {
     it('should return false for timeout error', async () => {
       const result = await service['checkUrlDirectly'](
         'https://does-not-work.perfume.new',
@@ -93,6 +93,15 @@ describe('UrlStatusService', () => {
 
       expect(firstResult).toBe(true);
       expect(secondResult).toBe(false);
+    });
+  });
+
+  describe('encodeUrlToBase64', () => {
+    it('should correctly encode a URL to Base64', () => {
+      const url = 'https://github.com';
+      const expectedBase64 = 'aHR0cHM6Ly9naXRodWIuY29t';
+
+      expect(service['encodeUrlToBase64'](url)).toBe(expectedBase64);
     });
   });
 });
