@@ -8,7 +8,7 @@ import { UrlsBySpecificPriorityController } from './urls-by-specific-priority.co
 import { UrlsBySpecificPriorityModule } from './urls-by-specific-priority.module';
 import { UrlsBySpecificPriorityService } from './urls-by-specific-priority.service';
 
-describe.only('UrlsBySpecificPriorityModule', () => {
+describe('UrlsBySpecificPriorityModule', () => {
   let module: TestingModule;
 
   beforeEach(async () => {
