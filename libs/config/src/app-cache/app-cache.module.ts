@@ -7,6 +7,18 @@ import { RedisClientOptions } from 'redis';
 const cacheModuleAsyncOptions: CacheModuleAsyncOptions = {
   inject: [ConfigService],
   useFactory: async (configService: ConfigService) => {
+    const mockRedisStore = {
+      get: jest.fn(),
+      set: jest.fn(),
+      del: jest.fn(),
+    };
+
+    if (process.env.NODE_ENV === 'test') {
+      return {
+        store: mockRedisStore,
+      };
+    }
+
     return {
       store: redisStore,
       socket: {

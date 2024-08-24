@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/scentronix-backend/test/jest-e2e.json"
+    "test:e2e": "NODE_ENV=test jest --config ./apps/scentronix-backend/test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.3",
@@ -74,12 +74,12 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/*/index.ts"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/apps/",
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
