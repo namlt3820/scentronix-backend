@@ -161,4 +161,38 @@ describe('UrlStatusService', () => {
       expect(result).toBe(cachedStatus);
     });
   });
+
+  describe('checkOneUrl', () => {
+    it('should return status from cache if available', async () => {
+      const url = 'http://example.com';
+      const cachedStatus = true;
+      const encodedUrl = service['encodeUrlToBase64'](url);
+      mockCacheManager.get.mockResolvedValue(cachedStatus);
+      const result = await service.checkOneUrl(url);
+
+      expect(result).toEqual({ url, isAvailable: cachedStatus });
+      expect(mockCacheManager.get).toHaveBeenCalledWith(encodedUrl);
+    });
+
+    it('should check URL directly and update cache if not in cache', async () => {
+      const url = 'http://example.com';
+      const isUrlAvailable = true;
+      const encodedUrl = service['encodeUrlToBase64'](url);
+      mockCacheManager.get.mockResolvedValue(undefined);
+      jest
+        .spyOn(service as any, 'checkUrlDirectly')
+        .mockResolvedValue(isUrlAvailable);
+
+      const result = await service.checkOneUrl(url);
+
+      expect(result).toEqual({ url, isAvailable: isUrlAvailable });
+      expect(mockCacheManager.get).toHaveBeenCalledWith(encodedUrl);
+      expect(service['checkUrlDirectly']).toHaveBeenCalledWith(url);
+      expect(mockCacheManager.set).toHaveBeenCalledWith(
+        encodedUrl,
+        isUrlAvailable,
+        5 * 60 * 1000,
+      );
+    });
+  });
 });
