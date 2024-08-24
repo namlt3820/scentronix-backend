@@ -10,17 +10,20 @@ import { UrlStatusService } from './url-status.service';
 describe('UrlStatusService', () => {
   let service: UrlStatusService;
   let mockAxios: MockAdapter;
+  let mockCacheManager: { get: jest.Mock; set: jest.Mock };
 
   beforeEach(async () => {
+    mockCacheManager = {
+      get: jest.fn(),
+      set: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UrlStatusService,
         {
           provide: CACHE_MANAGER,
-          useValue: {
-            get: jest.fn(),
-            set: jest.fn(),
-          },
+          useValue: mockCacheManager,
         },
       ],
     }).compile();
@@ -124,6 +127,38 @@ describe('UrlStatusService', () => {
 
     it('should return false for status code 404', () => {
       expect(service['isInAvailableRange'](404)).toBe(false);
+    });
+  });
+
+  describe('setUrlStatusInCache', () => {
+    it('should encode URL and set it in cache with TTL', async () => {
+      const url = 'http://example.com';
+      const isAvailable = true;
+      const encodedUrl = service['encodeUrlToBase64'](url);
+
+      await service['setUrlStatusInCache'](url, isAvailable);
+
+      expect(mockCacheManager.set).toHaveBeenCalledWith(
+        encodedUrl,
+        isAvailable,
+        5 * 60 * 1000,
+      );
+      expect(mockCacheManager.set).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('getUrlStatusInCache', () => {
+    it('should encode URL and get status from cache', async () => {
+      const url = 'http://example.com';
+      const encodedUrl = service['encodeUrlToBase64'](url);
+      const cachedStatus = true;
+
+      mockCacheManager.get.mockResolvedValue(cachedStatus);
+
+      const result = await service['getUrlStatusInCache'](url);
+
+      expect(mockCacheManager.get).toHaveBeenCalledWith(encodedUrl);
+      expect(result).toBe(cachedStatus);
     });
   });
 });
