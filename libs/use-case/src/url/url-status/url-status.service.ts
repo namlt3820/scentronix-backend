@@ -2,7 +2,7 @@ import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosResponse } from 'axios';
 
-interface UrlStatus {
+export interface UrlStatus {
   url: string;
   isAvailable: boolean;
 }

@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
-import { UrlStatusService } from './url-status.service';
+import { UrlStatus, UrlStatusService } from './url-status.service';
 
 // Update with your actual service path
 
@@ -193,6 +193,31 @@ describe('UrlStatusService', () => {
         isUrlAvailable,
         5 * 60 * 1000,
       );
+    });
+  });
+
+  describe('checkMultipleUrls', () => {
+    it('should return an array of UrlStatus objects for multiple URLs', async () => {
+      const urls = ['http://example1.com', 'http://example2.com'];
+      const statusResults: UrlStatus[] = [
+        { url: 'http://example1.com', isAvailable: true },
+        { url: 'http://example2.com', isAvailable: false },
+      ];
+
+      // Mock checkOneUrl to return predefined results
+      jest
+        .spyOn(service, 'checkOneUrl')
+        .mockImplementation(async (url: string) => {
+          return statusResults.find((status) => status.url === url);
+        });
+
+      const result = await service.checkMultipleUrls(urls);
+
+      expect(result).toEqual(statusResults);
+      expect(service.checkOneUrl).toHaveBeenCalledTimes(urls.length);
+      urls.forEach((url) => {
+        expect(service.checkOneUrl).toHaveBeenCalledWith(url);
+      });
     });
   });
 });
