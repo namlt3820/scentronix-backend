@@ -104,4 +104,26 @@ describe('UrlStatusService', () => {
       expect(service['encodeUrlToBase64'](url)).toBe(expectedBase64);
     });
   });
+
+  describe('isInAvailableRange', () => {
+    it('should return true for status code 200', () => {
+      expect(service['isInAvailableRange'](200)).toBe(true);
+    });
+
+    it('should return true for status code 299', () => {
+      expect(service['isInAvailableRange'](299)).toBe(true);
+    });
+
+    it('should return false for status code 199', () => {
+      expect(service['isInAvailableRange'](199)).toBe(false);
+    });
+
+    it('should return false for status code 300', () => {
+      expect(service['isInAvailableRange'](300)).toBe(false);
+    });
+
+    it('should return false for status code 404', () => {
+      expect(service['isInAvailableRange'](404)).toBe(false);
+    });
+  });
 });
